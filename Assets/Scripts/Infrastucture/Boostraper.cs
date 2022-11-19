@@ -7,7 +7,7 @@ public class Boostraper : MonoBehaviour
     [SerializeField]
     private GameObject _playerPrefab;
     [SerializeField]
-    private GameObject _projectilePrefab;
+    private Projectile _projectilePrefab;
 
     void Start()
     {

@@ -6,7 +6,7 @@ using UnityEngine.Windows;
 
 public class PlayerAnimationController : MonoBehaviour
 {
-    public float IdleTimeMax;
+    public float IdleTimeActovate;
 
     [SerializeField]
     private PlayerMoovement _playerMoovement;
@@ -14,6 +14,7 @@ public class PlayerAnimationController : MonoBehaviour
     private Animator _animator;
     private float _time = 0;
     private InputService _input;
+    private float _deltaX;
 
     private void Awake()
     {
@@ -41,7 +42,8 @@ public class PlayerAnimationController : MonoBehaviour
     private void UpdateInputVals()
     {
         _animator.SetBool("isFiring", _input.Player.Shoot.IsPressed());
-        _animator.SetFloat("mouseDeltaX", _input.Player.MouseDelta.ReadValue<Vector2>().x);
+        _deltaX = _input.Player.MouseDelta.ReadValue<Vector2>().x;
+        _animator.SetFloat("mouseDeltaX", _deltaX);
     }
 
     private void UpdateVelocity()
@@ -54,12 +56,14 @@ public class PlayerAnimationController : MonoBehaviour
 
     private void CalculateAdnUpdateTime()
     {
-        if (_playerMoovement.InputVector.magnitude == 0f)
+        if (_playerMoovement.InputVector.magnitude == 0f && _deltaX == 0f)
             _time += Time.deltaTime;
         else _time = 0;
 
-        if (_time > IdleTimeMax)
-            _time = 0;
-        _animator.SetFloat("Time", _time);
+        if (_time > IdleTimeActovate)
+        {
+            _animator.SetTrigger("idleTime");
+            _time = -11;
+        }
     }
 }

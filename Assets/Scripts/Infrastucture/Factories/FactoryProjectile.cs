@@ -2,15 +2,16 @@
 
 public class FactoryProjectile : IService
 {
-    public GameObject _projectilePrefab;
+    public Projectile _projectilePrefab;
 
-    public FactoryProjectile(GameObject projectilePrefab)
+    public FactoryProjectile(Projectile projectilePrefab)
     {
         _projectilePrefab = projectilePrefab;
     }
-    public void BuildProjectile(Vector3 instPos, Vector3 direction)
+    public Projectile BuildProjectile(Vector3 instPos, Vector3 direction)
     {
-        var projectile = GameObject.Instantiate(_projectilePrefab, instPos, Quaternion.identity).GetComponent<Projectile>();
+        Projectile projectile = Object.Instantiate(_projectilePrefab, instPos, Quaternion.identity);
         projectile.DirectionTarget = direction;
+        return projectile;
     }
 }

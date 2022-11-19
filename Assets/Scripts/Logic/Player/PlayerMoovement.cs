@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -50,7 +51,7 @@ public class PlayerMoovement : MonoBehaviour
         RotationCamera(mouseDelta);
 
         if (IsFlaying) ApplyDrag();
-        else _inputVector = Vector3.Lerp(_inputVector, _input.Player.Move.ReadValue<Vector3>(), 0.1f);
+        else _inputVector = Vector3.Lerp(_inputVector, _input.Player.Move.ReadValue<Vector3>().normalized, 0.1f);
         MovePlayer(_inputVector * _speed);
 
         ApplyGravity();
@@ -98,7 +99,7 @@ public class PlayerMoovement : MonoBehaviour
     {
         if (IsFlaying) return;
 
-        _verticalVelocity.y = _jumpStrength;
+        _verticalVelocity.y = Mathf.Sqrt(_jumpStrength * -Physics.gravity.y);
     }
 
     private void MovePlayer(Vector3 movement)

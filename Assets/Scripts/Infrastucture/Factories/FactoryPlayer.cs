@@ -9,6 +9,6 @@ public class FactoryPlayer : IService
         _playerPrefab = playerPrefab;
     }
 
-    internal void BuildPlayer(Vector3 at)
-        => GameObject.Instantiate(_playerPrefab, at, Quaternion.identity);
+    public GameObject BuildPlayer(Vector3 at)
+        => Object.Instantiate(_playerPrefab, at, Quaternion.identity);
 }

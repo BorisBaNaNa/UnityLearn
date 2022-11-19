@@ -12,11 +12,14 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField]
     private float _timeReload = 1f;
     [SerializeField]
-    private float _bulletSpread;
+    private float _randomAngelMax;
+    [SerializeField]
+    private AnimationCurve _curveDistanceRange;
 
     private InputService _input;
     private float _timeBeforShoot = 0f;
     private FactoryProjectile _factoryProjectile;
+    private bool _gunIsLoaded = true;
 
     private void Awake()
     {
@@ -38,29 +41,31 @@ public class PlayerShooting : MonoBehaviour
     void Update()
     {
         Shoot();
+        Cooldown();
     }
 
     private void Shoot()
     {
-        if (_timeBeforShoot > 0)
-        {
-            _timeBeforShoot -= Time.deltaTime;
-            return;
-        }
+        if (!_gunIsLoaded) return;
 
         if (!_input.Player.Shoot.IsPressed()) return;
         _timeBeforShoot = _timeReload;
 
         Ray cameraRay = Camera.main.ScreenPointToRay(_input.Player.MousePos.ReadValue<Vector2>());
         if (Physics.Raycast(cameraRay, out RaycastHit hit, 1000, ~_ignoedLayerMask))
-            _factoryProjectile.BuildProjectile(_gunPoint.position, GetBulletSpread(hit.point - _gunPoint.position));
+            _factoryProjectile.BuildProjectile(_gunPoint.position, GetBulletSpread(hit));
     }
 
-    private Vector3 GetBulletSpread(Vector3 direction)
+    private void Cooldown()
     {
-        float GetRandomSpread() => Random.Range(-_bulletSpread, _bulletSpread);
-        direction += new Vector3(GetRandomSpread(), GetRandomSpread(), GetRandomSpread());
+        _gunIsLoaded = _timeBeforShoot <= 0;
+        if (!_gunIsLoaded)
+            _timeBeforShoot -= Time.deltaTime;
+    }
 
-        return direction.normalized;
+    private Vector3 GetBulletSpread(RaycastHit hit)
+    {
+        Vector3 randomHitPoit = hit.point + Random.insideUnitSphere * _curveDistanceRange.Evaluate(hit.distance);
+        return (randomHitPoit - _gunPoint.position).normalized;
     }
 }
